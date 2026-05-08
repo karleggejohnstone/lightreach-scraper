@@ -1,0 +1,9 @@
+.env
+session.json
+service-account.json
+raw_audits/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/

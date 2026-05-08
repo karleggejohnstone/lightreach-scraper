@@ -198,6 +198,15 @@ def run(headless=True, save_session_only=False, project_urls=None):
     RAW_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     project_urls = project_urls or [PROJECTS_URL]
 
+    # On Railway, session.json is provided via a base64-encoded env var.
+    # Decode it to disk on startup if present and the file isn't already there.
+    session_b64 = os.environ.get("SESSION_BASE64")
+    if session_b64 and not SESSION_PATH.exists():
+        import base64
+        SESSION_PATH.parent.mkdir(parents=True, exist_ok=True)
+        SESSION_PATH.write_bytes(base64.b64decode(session_b64))
+        print(f"Decoded SESSION_BASE64 -> {SESSION_PATH}", file=sys.stderr)
+
     with sync_playwright() as pw:
         if save_session_only:
             manual_login_and_save(pw)
